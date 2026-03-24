@@ -19,7 +19,6 @@ import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsPage } from './pages/TermsPage';
 import { CookiePolicyPage } from './pages/CookiePolicyPage';
 import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { CookieBanner } from './components/CookieBanner';
@@ -83,7 +82,6 @@ function AppContent() {
           <Route path="/termes-et-conditions" element={<TermsPage />} />
           <Route path="/cookies" element={<CookiePolicyPage />} />
           <Route path="/connexion" element={<LoginPage />} />
-          <Route path="/inscription" element={<RegisterPage />} />
           <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
           <Route path="/reset-mot-de-passe" element={<ResetPasswordPage />} />
           <Route path="/erp-login" element={<ErpLoginPage />} />
