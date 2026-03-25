@@ -1,514 +1,118 @@
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
-function ProjectCarousel({
-  images,
-  height,
-  title
+import { motion } from 'framer-motion';
+import { ArrowUpRightIcon, MapPinIcon } from 'lucide-react';
+import { cmsApi } from '../services/api';
 
-
-
-
-}: {images: string[];height: string;title: string;}) {
-  const [current, setCurrent] = useState(0);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [images.length]);
-  return (
-    <div className={`relative w-full overflow-hidden ${height}`}>
-      <AnimatePresence mode="wait">
-        <motion.img
-          key={current}
-          src={images[current]}
-          alt={`${title} - ${current + 1}`}
-          className="absolute inset-0 w-full h-full object-cover"
-          initial={{
-            opacity: 0,
-            scale: 1.05
-          }}
-          animate={{
-            opacity: 1,
-            scale: 1
-          }}
-          exit={{
-            opacity: 0
-          }}
-          transition={{
-            duration: 0.7
-          }} />
-        
-      </AnimatePresence>
-      <div className="absolute bottom-3 right-3 z-20 flex gap-1.5">
-        {images.map((_, idx) =>
-        <div
-          key={idx}
-          className={`h-1 rounded-full transition-all duration-300 ${idx === current ? 'w-5 bg-globus-orange' : 'w-1.5 bg-white/50'}`} />
-
-        )}
-      </div>
-    </div>);
-
-}
-function FeaturedProjectMedia({ images }: {images: string[];}) {
-  const [isVideoPhase, setIsVideoPhase] = useState(true);
-  const [current, setCurrent] = useState(0);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVideoPhase(false);
-    }, 15000);
-    return () => clearTimeout(timer);
-  }, []);
-  useEffect(() => {
-    if (isVideoPhase) return;
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, [isVideoPhase, images.length]);
-  return (
-    <div className="relative w-full h-full overflow-hidden">
-      <AnimatePresence>
-        {isVideoPhase &&
-        <motion.div
-          className="absolute inset-0"
-          exit={{
-            opacity: 0
-          }}
-          transition={{
-            duration: 1
-          }}>
-          
-            <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover"
-            poster={images[0]}>
-            
-              <source
-              src="https://videos.pexels.com/video-files/2835509/2835509-hd_1920_1080_30fps.mp4"
-              type="video/mp4" />
-            
-            </video>
-            <div className="absolute bottom-4 left-4 right-4 z-20">
-              <div className="h-1 bg-white/20 rounded-full overflow-hidden">
-                <motion.div
-                className="h-full bg-globus-orange rounded-full"
-                initial={{
-                  width: '0%'
-                }}
-                animate={{
-                  width: '100%'
-                }}
-                transition={{
-                  duration: 14,
-                  ease: 'linear'
-                }} />
-              
-              </div>
-              <p className="text-white/60 text-xs font-opensans mt-2">
-                Vidéo de présentation...
-              </p>
-            </div>
-          </motion.div>
-        }
-      </AnimatePresence>
-
-      {!isVideoPhase &&
-      <>
-          <AnimatePresence mode="wait">
-            <motion.img
-            key={current}
-            src={images[current]}
-            alt={`Projet à la une - ${current + 1}`}
-            className="absolute inset-0 w-full h-full object-cover"
-            initial={{
-              opacity: 0,
-              scale: 1.05
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1
-            }}
-            exit={{
-              opacity: 0
-            }}
-            transition={{
-              duration: 0.7
-            }} />
-          
-          </AnimatePresence>
-          <div className="absolute bottom-3 right-3 z-20 flex gap-1.5">
-            {images.map((_, idx) =>
-          <div
-            key={idx}
-            className={`h-1 rounded-full transition-all duration-300 ${idx === current ? 'w-5 bg-globus-orange' : 'w-1.5 bg-white/50'}`} />
-
-          )}
-          </div>
-        </>
-      }
-    </div>);
-
-}
-function OngoingProjectShowcase() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const project = {
-    title: 'CENTRE COMMERCIALE DE LA PLACE EN',
-    description:
-    'Nous avons réalisé la construction complète de ce centre commercial moderne, comprenant 45 boutiques, un food court et un parking souterrain de 500 places. Le projet a été livré dans les délais et respecte les normes environnementales les plus strictes.',
-    progress: 80,
-    images: [
-    'https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'],
-
-    slug: 'tour-zenith'
-  };
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % project.images.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [project.images.length]);
-  const goTo = (idx: number) => setCurrentSlide(idx);
-  const goPrev = () =>
-  setCurrentSlide(
-    (prev) => (prev - 1 + project.images.length) % project.images.length
-  );
-  const goNext = () =>
-  setCurrentSlide((prev) => (prev + 1) % project.images.length);
-  return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: 30
-      }}
-      whileInView={{
-        opacity: 1,
-        y: 0
-      }}
-      viewport={{
-        once: true
-      }}
-      transition={{
-        duration: 0.6
-      }}
-      className="bg-white rounded-3xl shadow-xl overflow-hidden mb-16 border border-gray-100">
-      
-      {/* Label */}
-      <div className="bg-globus-orange px-6 py-3 flex items-center gap-3">
-        <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-        <span className="font-montserrat font-bold text-white text-sm uppercase tracking-wider">
-          Nouveau Projet en Cours
-        </span>
-      </div>
-
-      <div className="flex flex-col lg:flex-row">
-        {/* Image Carousel */}
-        <div className="w-full lg:w-1/2 relative h-[350px] lg:h-[420px] overflow-hidden group bg-globus-light">
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={currentSlide}
-              src={project.images[currentSlide]}
-              alt={`${project.title} - ${currentSlide + 1}`}
-              className="absolute inset-0 w-full h-full object-cover"
-              initial={{
-                opacity: 0,
-                scale: 1.05
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1
-              }}
-              exit={{
-                opacity: 0
-              }}
-              transition={{
-                duration: 0.6
-              }} />
-            
-          </AnimatePresence>
-
-          {/* Nav Arrows */}
-          <button
-            onClick={goPrev}
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center text-globus-blue-dark shadow-md opacity-0 group-hover:opacity-100 transition-all z-10">
-            
-            <ChevronLeftIcon className="w-5 h-5" />
-          </button>
-          <button
-            onClick={goNext}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center text-globus-blue-dark shadow-md opacity-0 group-hover:opacity-100 transition-all z-10">
-            
-            <ChevronRightIcon className="w-5 h-5" />
-          </button>
-
-          {/* Dots */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-            {project.images.map((_, idx) =>
-            <button
-              key={idx}
-              onClick={() => goTo(idx)}
-              className={`h-2 rounded-full transition-all duration-300 ${idx === currentSlide ? 'w-7 bg-globus-orange' : 'w-2 bg-white/60 hover:bg-white'}`} />
-
-            )}
-          </div>
-        </div>
-
-        {/* Project Info */}
-        <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
-          <h3 className="font-montserrat font-extrabold text-2xl md:text-3xl text-globus-blue-dark mb-6 uppercase leading-tight">
-            {project.title}
-          </h3>
-          <p className="font-opensans text-globus-gray leading-relaxed mb-8">
-            {project.description}
-          </p>
-
-          {/* Progress Bar */}
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-montserrat font-bold text-globus-blue-dark text-sm">
-                Progression
-              </span>
-              <span className="font-montserrat font-extrabold text-globus-blue text-lg">
-                {project.progress}%
-              </span>
-            </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-globus-blue to-globus-blue-dark rounded-full"
-                initial={{
-                  width: 0
-                }}
-                whileInView={{
-                  width: `${project.progress}%`
-                }}
-                viewport={{
-                  once: true
-                }}
-                transition={{
-                  duration: 1.2,
-                  ease: 'easeOut',
-                  delay: 0.3
-                }} />
-              
-            </div>
-          </div>
-
-          {/* CTA */}
-          <Link
-            to={`/projets/${project.slug}`}
-            className="inline-flex items-center gap-2 bg-globus-blue-dark hover:bg-globus-blue text-white font-montserrat font-bold py-3.5 px-8 rounded-lg transition-all shadow-md hover:shadow-lg self-start">
-            
-            En Savoir Plus
-            <ArrowRightIcon className="w-5 h-5" />
-          </Link>
-        </div>
-      </div>
-    </motion.div>);
-
-}
 export function PortfolioSection() {
-  const [activeFilter, setActiveFilter] = useState('Tous');
-  const filters = ['Tous', 'Résidentiel', 'Commercial', 'Gros Œuvre'];
-  const projects = [
-  {
-    id: 1,
-    title: 'Villa Contemporaine Les Alizés',
-    category: 'Résidentiel',
-    images: [
-    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'],
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    featured: true
-  },
-  {
-    id: 2,
-    title: 'Complexe Bureaux Horizon',
-    category: 'Commercial',
-    images: [
-    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1582063289852-62e3ba2747f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'],
+  const fallbackProjects = [
+    {
+      id: 1,
+      title: 'Villa Les Alizés',
+      category: 'Résidentiel',
+      location: 'Douala, Cameroun',
+      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      slug: 'villa-alizes'
+    },
+    {
+      id: 2,
+      title: 'Complexe Administratif Horizon',
+      category: 'Commercial',
+      location: 'Yaoundé, Cameroun',
+      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      slug: 'complexe-horizon'
+    },
+    {
+      id: 3,
+      title: 'Hôpital Régional',
+      category: 'Institutionnel',
+      location: 'Bafoussam, Cameroun',
+      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      slug: 'hopital-regional'
+    },
+    {
+      id: 4,
+      title: 'Résidence de Luxe Les Palmiers',
+      category: 'Résidentiel',
+      location: 'Kribi, Cameroun',
+      image: 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      slug: 'residence-palmiers'
+    }
+  ];
 
-    featured: false
-  },
-  {
-    id: 3,
-    title: 'Résidence Les Jardins',
-    category: 'Résidentiel',
-    images: [
-    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'],
+  useEffect(() => {
+    cmsApi.getProjects()
+      .then(res => {
+        if (res.data && res.data.length > 0) {
+          setProjects(res.data.slice(0, 4));
+        } else {
+          setProjects(fallbackProjects);
+        }
+      })
+      .catch(err => {
+        console.error("Erreur portfolio", err);
+        setProjects(fallbackProjects);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
-    featured: false
-  },
-  {
-    id: 4,
-    title: 'Fondations Tour Zenith',
-    category: 'Gros Œuvre',
-    images: [
-    'https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'],
+  if (loading) return null;
 
-    featured: false
-  },
-  {
-    id: 5,
-    title: 'Boutique Flagship Centre',
-    category: 'Commercial',
-    images: [
-    'https://images.unsplash.com/photo-1582063289852-62e3ba2747f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'],
-
-    featured: false
-  }];
-
-  const filteredProjects =
-  activeFilter === 'Tous' ?
-  projects :
-  projects.filter((p) => p.category === activeFilter);
   return (
-    <section id="projets" className="py-16 md:py-24 bg-globus-light">
+    <section id="portfolio" className="py-16 md:py-24 bg-globus-light">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0
-            }}
-            viewport={{
-              once: true
-            }}
-            className="inline-flex items-center justify-center gap-4 mb-4">
-            
-            <div className="h-1 w-8 bg-globus-orange"></div>
-            <span className="font-montserrat font-bold text-globus-orange uppercase tracking-wider text-sm">
-              Portfolio
-            </span>
-            <div className="h-1 w-8 bg-globus-orange"></div>
-          </motion.div>
-          <motion.h2
-            initial={{
-              opacity: 0,
-              y: 20
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0
-            }}
-            viewport={{
-              once: true
-            }}
-            transition={{
-              delay: 0.1
-            }}
-            className="font-montserrat font-extrabold text-3xl md:text-4xl text-globus-blue-dark">
-            
-            Projets à la Une & Réalisations
-          </motion.h2>
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-16 gap-6">
+          <div className="max-w-2xl">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex items-center gap-4 mb-4">
+              <div className="h-1 w-12 bg-globus-orange"></div>
+              <span className="font-montserrat font-bold text-globus-orange uppercase tracking-wider text-sm">
+                Notre Portfolio
+              </span>
+            </motion.div>
+            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="font-montserrat font-extrabold text-3xl md:text-4xl text-globus-blue-dark">
+              Découvrez nos réalisations récentes.
+            </motion.h2>
+          </div>
+          <motion.a href="#/projets" initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="shrink-0 inline-flex items-center gap-2 font-montserrat font-bold text-globus-blue hover:text-globus-orange transition-colors">
+            Voir tous les projets
+            <ArrowUpRightIcon className="w-5 h-5" />
+          </motion.a>
         </div>
 
-        {/* NEW: Ongoing Project Showcase */}
-        <OngoingProjectShowcase />
-
-        {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {filters.map((filter) =>
-          <button
-            key={filter}
-            onClick={() => setActiveFilter(filter)}
-            className={`font-montserrat font-semibold px-6 py-2 rounded-full transition-all ${activeFilter === filter ? 'bg-globus-blue text-white shadow-md' : 'bg-white text-globus-gray hover:bg-seconda-blue hover:text-globus-blue-dark'}`}>
-            
-              {filter}
-            </button>
-          )}
-        </div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project) =>
-            <motion.div
-              key={project.id}
-              layout
-              initial={{
-                opacity: 0,
-                scale: 0.9
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1
-              }}
-              exit={{
-                opacity: 0,
-                scale: 0.9
-              }}
-              transition={{
-                duration: 0.3
-              }}
-              className={`group relative rounded-xl overflow-hidden shadow-lg cursor-pointer ${project.featured && activeFilter === 'Tous' ? 'md:col-span-2 md:row-span-2' : ''}`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          {projects.map((project, index) => (
+            <motion.a key={project.id || index} href={`#/projets/${project.slug}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1, duration: 0.6 }} className="group relative block rounded-2xl overflow-hidden aspect-[4/3] md:aspect-auto md:h-[400px] lg:h-[450px]">
+              <div className="absolute inset-0 bg-gray-200">
+                <img src={project.cover_image_url || project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-globus-blue-dark/90 via-globus-blue-dark/40 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90"></div>
               
-                <div className="absolute inset-0 bg-globus-blue-dark/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-end p-8">
-                  <span className="text-globus-orange font-montserrat font-bold text-sm mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+              <div className="absolute inset-0 p-8 flex flex-col justify-end transform transition-transform duration-300">
+                <div className="mb-4 transform translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <span className="inline-block px-4 py-1.5 bg-globus-orange text-white font-montserrat font-bold text-xs uppercase tracking-wider rounded-full shadow-lg">
                     {project.category}
                   </span>
-                  <h3 className="text-white font-montserrat font-extrabold text-2xl mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
-                    {project.title}
-                  </h3>
-                  <div className="w-10 h-10 rounded-full bg-globus-orange flex items-center justify-center transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-150">
-                    <ArrowRightIcon className="w-5 h-5 text-white" />
-                  </div>
                 </div>
 
-                {/* Featured project: video → carousel. Others: carousel only */}
-                {project.featured && activeFilter === 'Tous' ?
-              <FeaturedProjectMedia images={project.images} /> :
+                <h3 className="font-montserrat font-extrabold text-2xl md:text-3xl text-white mb-2 leading-tight">
+                  {project.title}
+                </h3>
 
-              <ProjectCarousel
-                images={project.images}
-                height={
-                project.featured && activeFilter === 'Tous' ?
-                'h-[600px]' :
-                'h-[300px]'
-                }
-                title={project.title} />
+                <div className="flex items-center gap-2 text-gray-300 font-opensans">
+                  <MapPinIcon className="w-4 h-4 text-globus-orange" />
+                  <span>{project.location}</span>
+                </div>
+              </div>
 
-              }
-
-                {/* Fallback height for featured */}
-                {project.featured && activeFilter === 'Tous' &&
-              <div className="h-[600px]" />
-              }
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        <div className="mt-16 text-center">
-          <a
-            href="#portfolio"
-            className="inline-block border-2 border-globus-blue text-globus-blue hover:bg-globus-blue hover:text-white font-montserrat font-bold py-4 px-10 rounded-lg transition-all">
-            
-            Explorer l'intégralité du Portfolio
-          </a>
+              <div className="absolute top-6 right-6 w-12 h-12 bg-white rounded-full flex items-center justify-center transform scale-0 opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100 shadow-xl">
+                <ArrowUpRightIcon className="w-6 h-6 text-globus-blue" />
+              </div>
+            </motion.a>
+          ))}
         </div>
       </div>
-    </section>);
-
+    </section>
+  );
 }

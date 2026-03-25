@@ -8,6 +8,7 @@ import {
   PaintRollerIcon,
   ArrowRightIcon,
   ChevronRightIcon,
+  BriefcaseIcon,
   HomeIcon } from
 'lucide-react';
 export const servicesData = [
@@ -48,12 +49,39 @@ export const servicesData = [
   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
 }];
 
+import { SEOMeta } from '../components/SEOMeta';
+import { cmsApi } from '../services/api';
+
 export function ServicesPage() {
+  const [services, setServices] = useState<any[]>(servicesData);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    const fetchServices = async () => {
+      try {
+        const response = await cmsApi.getServices();
+        if (response.data && response.data.length > 0) {
+          const mapped = response.data.map((s: any) => ({
+             id: s.slug,
+             title: s.title,
+             subtitle: s.short_description,
+             description: s.short_description,
+             icon: s.icon_name === 'HomeIcon' ? HomeIcon : BriefcaseIcon, // Fallback icon mapping
+             image: s.image_url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80'
+          }));
+          setServices(mapped);
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchServices();
   }, []);
+
   return (
     <div className="pt-28 pb-20 bg-globus-light min-h-screen">
+      <SEOMeta title="Nos Services - Globus Engineering BTP" description="Découvrez l'ensemble de nos services de construction, d'ingénierie et de conception." />
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 mb-6">
         <nav className="flex items-center text-sm font-opensans text-globus-gray">
@@ -112,7 +140,7 @@ export function ServicesPage() {
       {/* Services Grid */}
       <section className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {servicesData.map((service, idx) =>
+          {services.map((service, idx) =>
           <motion.div
             key={service.id}
             initial={{

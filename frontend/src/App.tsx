@@ -19,7 +19,6 @@ import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsPage } from './pages/TermsPage';
 import { CookiePolicyPage } from './pages/CookiePolicyPage';
 import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { CookieBanner } from './components/CookieBanner';
@@ -52,6 +51,8 @@ import { ErpLoginPage } from './pages/ErpLoginPage';
 import { ErpCMS } from './pages/erp/ErpCMS';
 import { ErpSAV } from './pages/erp/ErpSAV';
 import { ClientPlanning } from './pages/client/ClientPlanning';
+import { BudgetChatbot } from './components/BudgetChatbot';
+import { SEOMeta } from './components/SEOMeta';
 function AppContent() {
   const location = useLocation();
   const isClientPortal = location.pathname.startsWith('/espace-client');
@@ -61,6 +62,7 @@ function AppContent() {
     <div
       className={`font-opensans text-globus-gray bg-white w-full min-h-screen flex flex-col ${isPortal ? 'h-screen overflow-hidden' : ''}`}>
       
+      <SEOMeta />
       {!isPortal && <Header />}
       <main className={isPortal ? 'flex-1 h-full' : 'flex-grow'}>
         <Routes>
@@ -83,7 +85,6 @@ function AppContent() {
           <Route path="/termes-et-conditions" element={<TermsPage />} />
           <Route path="/cookies" element={<CookiePolicyPage />} />
           <Route path="/connexion" element={<LoginPage />} />
-          <Route path="/inscription" element={<RegisterPage />} />
           <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
           <Route path="/reset-mot-de-passe" element={<ResetPasswordPage />} />
           <Route path="/erp-login" element={<ErpLoginPage />} />
@@ -126,6 +127,7 @@ function AppContent() {
           <Footer />
           <FloatingWidgets />
           <CookieBanner />
+          <BudgetChatbot />
         </>
       }
     </div>);

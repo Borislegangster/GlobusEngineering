@@ -89,12 +89,29 @@ export const blogPostsData = [
   featured: false
 }];
 
+import { SEOMeta } from '../components/SEOMeta';
+import { cmsApi } from '../services/api';
+
 export function BlogPage() {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
   const [activeCategory, setActiveCategory] = useState('Tous');
   const [searchQuery, setSearchQuery] = useState('');
+  const [posts, setPosts] = useState<any[]>(blogPostsData);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const fetchPosts = async () => {
+      try {
+        const response = await cmsApi.getBlogPosts();
+        if (response.data && response.data.length > 0) {
+          setPosts(response.data);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchPosts();
+  }, []);
+
   const categories = [
   'Tous',
   'Conseils',
@@ -103,8 +120,8 @@ export function BlogPage() {
   'Chantier',
   'Réglementation'];
 
-  const heroPost = blogPostsData.find((p) => p.featured) || blogPostsData[0];
-  const regularPosts = blogPostsData.filter((p) => p.id !== heroPost.id);
+  const heroPost = posts.find((p) => p.featured) || posts[0];
+  const regularPosts = posts.filter((p) => p.id !== heroPost.id);
   // Filter logic
   const filteredPosts = regularPosts.filter((post) => {
     const matchesCategory =
@@ -121,6 +138,7 @@ export function BlogPage() {
   heroPost.title.toLowerCase().includes(searchQuery.toLowerCase()));
   return (
     <div className="pt-28 pb-20 bg-globus-light min-h-screen">
+      <SEOMeta title="Blog & Actualités - Globus BTP" description="Découvrez nos conseils en construction, tendances architecturales et dernières actualités BTP." />
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 mb-6">
         <nav className="flex items-center text-sm font-opensans text-globus-gray">

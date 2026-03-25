@@ -120,13 +120,42 @@ export const projectsData = [
   progress: 100
 }];
 
+import { SEOMeta } from '../components/SEOMeta';
+import { cmsApi } from '../services/api';
+
 export function ProjectsPage() {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
   const [activeCategory, setActiveCategory] = useState('Toutes catégories');
   const [activeStatus, setActiveStatus] = useState('Tous les projets');
   const [visibleCount, setVisibleCount] = useState(6);
+  const [projects, setProjects] = useState<any[]>(projectsData);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const fetchProjects = async () => {
+      try {
+        const response = await cmsApi.getProjects();
+        if (response.data && response.data.length > 0) {
+          // Map API to expected front end format
+          const mapped = response.data.map((p: any) => ({
+             id: p.slug,
+             title: p.title,
+             category: p.category,
+             location: p.location,
+             status: p.completion_date || 'En construction',
+             image: p.cover_image_url,
+             height: 'h-[400px]',
+             progress: p.completion_date ? 100 : 50
+          }));
+          setProjects(mapped);
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      setProjects(projectsData);
+    };
+    fetchProjects();
+  }, []);
   const categories = [
   'Toutes catégories',
   'Résidentiel',
@@ -137,7 +166,7 @@ export function ProjectsPage() {
   const statuses = ['Tous les projets', 'En cours', 'Terminés'];
   const getProjectStatus = (progress: number) =>
   progress === 100 ? 'Terminés' : 'En cours';
-  const filteredProjects = projectsData.filter((p) => {
+  const filteredProjects = projects.filter((p) => {
     const matchesCategory =
     activeCategory === 'Toutes catégories' || p.category === activeCategory;
     const matchesStatus =
@@ -148,6 +177,7 @@ export function ProjectsPage() {
   const displayedProjects = filteredProjects.slice(0, visibleCount);
   return (
     <div className="pt-28 pb-20 bg-globus-light min-h-screen">
+      <SEOMeta title="Portfolio - Nos Réalisations Globus BTP" description="Découvrez nos projets de construction résidentiels, commerciaux et industriels achevés ou en cours." />
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 mb-6">
         <nav className="flex items-center text-sm font-opensans text-globus-gray">

@@ -228,17 +228,6 @@ export function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-8 text-center border-t border-gray-100 pt-6">
-          <p className="font-opensans text-sm text-globus-gray">
-            Pas encore de compte ?{' '}
-            <Link
-              to="/inscription"
-              className="text-globus-blue font-bold hover:underline">
-              
-              Créer un compte
-            </Link>
-          </p>
-        </div>
       </motion.div>
     </div>);
 

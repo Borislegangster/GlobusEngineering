@@ -14,12 +14,15 @@ import { PartnersSection } from '../components/PartnersSection';
 import { TestimonialsSection } from '../components/TestimonialsSection';
 import { FAQSection } from '../components/FAQSection';
 import { BlogSection } from '../components/BlogSection';
+import { SEOMeta } from '../components/SEOMeta';
+
 export function HomePage() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   return (
     <div className="w-full">
+      <SEOMeta title="Accueil - Globus Engineering BTP" description="Globus Engineering SARL, entreprise BTP spécialisée dans la construction de bâtiments clé en main. De la conception à la remise des clés." />
       <HeroSection />
       <EngagementsBar />
       <AboutSection />
