@@ -15,22 +15,40 @@ import {
   CheckIcon } from
 'lucide-react';
 import { blogPostsData } from './BlogPage';
+import { cmsApi } from '../services/api';
+import { SEOMeta } from '../components/SEOMeta';
+
 export function BlogDetailPage() {
   const { slug } = useParams<{
     slug: string;
   }>();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
-  // Find article or fallback
-  const article = blogPostsData.find((p) => p.id === slug) || blogPostsData[0];
+  const [article, setArticle] = useState<any>(null);
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (!blogPostsData.find((p) => p.id === slug)) {
+    const fetchArticle = async () => {
+      try {
+        if (slug) {
+          const response = await cmsApi.getBlogPost(slug);
+          if (response.data) {
+            setArticle(response.data);
+            return;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
 
+      // Fallback
+      setArticle(blogPostsData.find((p) => p.id === slug) || blogPostsData[0]);
+    };
+    fetchArticle();
+  }, [slug]);
 
-      // If invalid slug, we just show the first post as fallback for demo purposes
-      // In a real app, we might navigate('/blog') or show a 404
-    }}, [slug]); // Get related articles (same category, excluding current)
+  if (!article) return null;
+
   const relatedArticles = blogPostsData.
   filter((p) => p.category === article.category && p.id !== article.id).
   slice(0, 2);
@@ -51,6 +69,7 @@ export function BlogDetailPage() {
   };
   return (
     <div className="pt-28 pb-20 bg-white min-h-screen">
+      <SEOMeta title={`${article.title} - Globus BTP`} description={article.excerpt} />
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Breadcrumb */}
         <nav className="flex items-center text-sm font-opensans text-globus-gray mb-8">

@@ -1,5 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.database import engine
+from app.models import cms
+from app.api.routers import cms as cms_router
+from app.api.routers import chatbot as chatbot_router
+
+# Create database tables
+cms.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Globus BTP API",
@@ -19,6 +26,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(cms_router.router, prefix="/api")
+app.include_router(chatbot_router.router, prefix="/api")
 
 @app.get("/")
 def read_root():

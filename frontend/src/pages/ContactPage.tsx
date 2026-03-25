@@ -8,6 +8,8 @@ import {
   SendIcon,
   CheckCircleIcon } from
 'lucide-react';
+import { SEOMeta } from '../components/SEOMeta';
+
 export function ContactPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -25,6 +27,7 @@ export function ContactPage() {
   };
   return (
     <div className="pt-28 pb-0 bg-globus-light min-h-screen flex flex-col">
+      <SEOMeta title="Contactez-nous - Globus Engineering" description="Demandez un devis, discutez de votre projet de construction ou posez-nous vos questions." />
       <div className="container mx-auto px-4 mb-16 flex-grow">
         <div className="text-center mb-16">
           <motion.h1

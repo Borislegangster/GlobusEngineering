@@ -20,6 +20,11 @@ import {
 'lucide-react';
 const tabs = [
 {
+  id: 'pages',
+  label: 'Pages & Légal',
+  icon: FileTextIcon
+},
+{
   id: 'blog',
   label: 'Articles Blog',
   icon: FileTextIcon
@@ -300,8 +305,150 @@ const fadeUp = {
     }
   }
 };
+
+// Shared Modal Component
+const Modal = ({ isOpen, onClose, title, children }: any) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden my-auto"
+      >
+        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+          <h3 className="font-montserrat font-bold text-xl text-globus-blue-dark">{title}</h3>
+          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200 transition-colors">
+             ✕
+          </button>
+        </div>
+        <div className="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          {children}
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
 export function ErpCMS() {
-  const [activeTab, setActiveTab] = useState('blog');
+  const [activeTab, setActiveTab] = useState('pages');
+  const [pagesList, setPagesList] = useState<any[]>([]);
+
+  // Editing state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editType, setEditType] = useState('');
+  const [editItem, setEditItem] = useState<any>(null);
+
+  const handleEditClick = (item: any, type: string) => {
+    setEditType(type);
+    setEditItem({ ...item }); // create a copy
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      if (editType === 'Page') {
+        await cmsApi.updatePage(editItem.slug, editItem);
+        const res = await cmsApi.getPages();
+        setPagesList(res.data);
+      } else if (editType === 'Blog') {
+        await cmsApi.updateBlogPost(editItem.slug, editItem);
+        const res = await cmsApi.getBlogPosts();
+        setBlogList(res.data);
+      } else if (editType === 'Projet') {
+        await cmsApi.updateProject(editItem.slug, editItem);
+        const res = await cmsApi.getProjects();
+        setProjectsList(res.data);
+      } else if (editType === 'Service') {
+        await cmsApi.updateService(editItem.slug, editItem);
+        const res = await cmsApi.getServices();
+        setServicesList(res.data);
+      } else if (editType === 'Equipe') {
+        await cmsApi.updateTeamMember(editItem.id, editItem);
+        const res = await cmsApi.getTeam();
+        setTeamList(res.data);
+      } else if (editType === 'Témoignage') {
+        await cmsApi.updateTestimonial(editItem.id, editItem);
+        const res = await cmsApi.getTestimonials();
+        setTestimonialsList(res.data);
+      } else if (editType === 'FAQ') {
+        await cmsApi.updateFaq(editItem.id, editItem);
+        const res = await cmsApi.getFaqs();
+        setFaqList(res.data);
+      }
+      setIsEditing(false);
+      alert('Modification enregistrée avec succès.');
+    } catch (e) {
+      console.error(e);
+      alert('Erreur lors de la modification.');
+    }
+  };
+
+  const handleDeleteClick = async (item: any, type: string) => {
+    if (window.confirm(`Êtes-vous sûr de vouloir supprimer cet élément de type ${type}?`)) {
+      try {
+        if (type === 'Blog') {
+          await cmsApi.deleteBlogPost(item.slug);
+          const res = await cmsApi.getBlogPosts();
+          setBlogList(res.data);
+        } else if (type === 'Projet') {
+          await cmsApi.deleteProject(item.slug);
+          const res = await cmsApi.getProjects();
+          setProjectsList(res.data);
+        } else if (type === 'Service') {
+          await cmsApi.deleteService(item.slug);
+          const res = await cmsApi.getServices();
+          setServicesList(res.data);
+        } else if (type === 'Equipe') {
+          await cmsApi.deleteTeamMember(item.id);
+          const res = await cmsApi.getTeam();
+          setTeamList(res.data);
+        } else if (type === 'Témoignage') {
+          await cmsApi.deleteTestimonial(item.id);
+          const res = await cmsApi.getTestimonials();
+          setTestimonialsList(res.data);
+        } else if (type === 'FAQ') {
+          await cmsApi.deleteFaq(item.id);
+          const res = await cmsApi.getFaqs();
+          setFaqList(res.data);
+        }
+        alert('Élément supprimé avec succès.');
+      } catch (e) {
+        console.error(e);
+        alert('Erreur lors de la suppression.');
+      }
+    }
+  };
+
+  const handlePublishToggle = async (item: any, type: string) => {
+      try {
+        if (type === 'Page') {
+          await cmsApi.updatePage(item.slug, { ...item, is_published: !item.is_published });
+          const res = await cmsApi.getPages();
+          setPagesList(res.data);
+        } else if (type === 'Blog') {
+          await cmsApi.updateBlogPost(item.slug, { ...item, is_published: !item.is_published });
+          const res = await cmsApi.getBlogPosts();
+          setBlogList(res.data);
+        }
+        alert('Statut de publication mis à jour avec succès.');
+      } catch (e) {
+        console.error(e);
+        alert('Erreur lors de la mise à jour.');
+      }
+  };
+
+  useEffect(() => {
+    const loadPages = async () => {
+      try {
+        const res = await cmsApi.getPages();
+        if (res.data) setPagesList(res.data);
+      } catch (e) { console.error(e); }
+    };
+    loadPages();
+  }, []);
+
   return (
     <div className="max-w-[1400px] mx-auto space-y-6">
       {/* Header & Tabs */}
@@ -342,6 +489,63 @@ export function ErpCMS() {
       </div>
 
       <AnimatePresence mode="wait">
+        {/* TAB 0: PAGES */}
+        {activeTab === 'pages' &&
+          <motion.div
+            key="pages"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={stagger}
+            className="space-y-6">
+            <motion.div variants={fadeUp} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row gap-4 justify-between items-center">
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <h3 className="font-montserrat font-bold text-lg text-globus-blue-dark">Pages Publiques</h3>
+                </div>
+                <button className="w-full sm:w-auto bg-globus-orange hover:bg-globus-orange-hover text-white font-montserrat font-bold py-2 px-4 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2 text-sm">
+                  <PlusIcon className="w-4 h-4" /> Nouvelle Page
+                </button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-montserrat font-bold text-gray-500 uppercase">
+                      <th className="py-3 px-5">Titre</th>
+                      <th className="py-3 px-5">Slug / URL</th>
+                      <th className="py-3 px-5">Statut</th>
+                      <th className="py-3 px-5 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 text-sm font-opensans">
+                    {pagesList.map((page) =>
+                      <tr key={page.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="py-3 px-5 font-semibold text-gray-800">{page.title}</td>
+                        <td className="py-3 px-5 text-gray-600">/{page.slug}</td>
+                        <td className="py-3 px-5">
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase ${page.is_published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
+                            {page.is_published ? 'Publié' : 'Brouillon'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-5 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button onClick={() => handleEditClick(page, 'Page')} className="p-1.5 text-gray-400 hover:text-globus-blue hover:bg-blue-50 rounded transition-colors" title="Modifier">
+                              <EditIcon className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => handlePublishToggle(page, 'Page')} className="p-1.5 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded transition-colors" title={page.is_published ? 'Dépublier' : 'Publier'}>
+                              {page.is_published ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          </motion.div>
+        }
+
         {/* TAB 1: BLOG */}
         {activeTab === 'blog' &&
         <motion.div
@@ -472,13 +676,13 @@ export function ErpCMS() {
                         </td>
                         <td className="py-3 px-5 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <button
+                            <button onClick={() => handleEditClick(post, 'Blog')}
                           className="p-1.5 text-gray-400 hover:text-globus-blue hover:bg-blue-50 rounded transition-colors"
                           title="Modifier">
                           
                               <EditIcon className="w-4 h-4" />
                             </button>
-                            <button
+                            <button onClick={() => handlePublishToggle(post, 'Blog')}
                           className="p-1.5 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded transition-colors"
                           title={
                           post.status === 'Publié' ?
@@ -492,7 +696,7 @@ export function ErpCMS() {
                           <EyeIcon className="w-4 h-4" />
                           }
                             </button>
-                            <button
+                            <button onClick={() => handleDeleteClick(post, 'Blog')}
                           className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
                           title="Supprimer">
                           
@@ -582,10 +786,10 @@ export function ErpCMS() {
                     </div>
 
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <button className="text-sm font-semibold text-gray-500 hover:text-globus-blue flex items-center gap-1">
+                      <button onClick={() => handleEditClick(project, 'Projet')} className="text-sm font-semibold text-gray-500 hover:text-globus-blue flex items-center gap-1">
                         <EditIcon className="w-4 h-4" /> Modifier
                       </button>
-                      <button className="text-sm font-semibold text-gray-400 hover:text-red-500 flex items-center gap-1">
+                      <button onClick={() => handleDeleteClick(project, 'Projet')} className="text-sm font-semibold text-gray-400 hover:text-red-500 flex items-center gap-1">
                         <Trash2Icon className="w-4 h-4" />
                       </button>
                     </div>
@@ -643,10 +847,10 @@ export function ErpCMS() {
                       <span className="px-2 py-1 rounded-full text-[10px] font-bold uppercase bg-green-100 text-green-700">
                         {service.status}
                       </span>
-                      <button className="p-2 text-gray-400 hover:text-globus-blue hover:bg-blue-50 rounded transition-colors">
+                      <button onClick={() => handleEditClick(service, 'Service')} className="p-2 text-gray-400 hover:text-globus-blue hover:bg-blue-50 rounded transition-colors">
                         <EditIcon className="w-4 h-4" />
                       </button>
-                      <button className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
+                      <button onClick={() => handleDeleteClick(service, 'Service')} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
                         <Trash2Icon className="w-4 h-4" />
                       </button>
                     </div>
@@ -686,10 +890,10 @@ export function ErpCMS() {
                 className="border border-gray-100 rounded-lg p-4 text-center relative group hover:border-globus-blue/30 transition-colors">
                 
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                      <button className="p-1 text-gray-400 hover:text-globus-blue">
+                      <button onClick={() => handleEditClick(member, 'Equipe')} className="p-1 text-gray-400 hover:text-globus-blue">
                         <EditIcon className="w-3.5 h-3.5" />
                       </button>
-                      <button className="p-1 text-gray-400 hover:text-red-500">
+                      <button onClick={() => handleDeleteClick(member, 'Equipe')} className="p-1 text-gray-400 hover:text-red-500">
                         <Trash2Icon className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -740,10 +944,10 @@ export function ErpCMS() {
                       "{testi.quote}"
                     </p>
                     <div className="flex justify-end gap-2 mt-3">
-                      <button className="text-xs font-semibold text-gray-500 hover:text-globus-blue">
+                      <button onClick={() => handleEditClick(testi, 'Témoignage')} className="text-xs font-semibold text-gray-500 hover:text-globus-blue">
                         Modifier
                       </button>
-                      <button className="text-xs font-semibold text-gray-400 hover:text-red-500">
+                      <button onClick={() => handleDeleteClick(testi, 'Témoignage')} className="text-xs font-semibold text-gray-400 hover:text-red-500">
                         Supprimer
                       </button>
                     </div>
@@ -796,10 +1000,10 @@ export function ErpCMS() {
                       </div>
                     </div>
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                      <button className="p-1 text-gray-400 hover:text-globus-blue">
+                      <button onClick={() => handleEditClick(faq, 'FAQ')} className="p-1 text-gray-400 hover:text-globus-blue">
                         <EditIcon className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-gray-400 hover:text-red-500">
+                      <button onClick={() => handleDeleteClick(faq, 'FAQ')} className="p-1 text-gray-400 hover:text-red-500">
                         <Trash2Icon className="w-4 h-4" />
                       </button>
                     </div>
@@ -854,6 +1058,71 @@ export function ErpCMS() {
           </motion.div>
         }
       </AnimatePresence>
+
+      <Modal isOpen={isEditing} onClose={() => setIsEditing(false)} title={`Modifier ${editType}`}>
+        {editItem && (
+          <div className="space-y-4">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-gray-700">Titre / Nom / Question</label>
+              <input
+                type="text"
+                value={editItem.title || editItem.name || editItem.question || ''}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if ('title' in editItem) setEditItem({...editItem, title: val});
+                  else if ('name' in editItem) setEditItem({...editItem, name: val});
+                  else if ('question' in editItem) setEditItem({...editItem, question: val});
+                }}
+                className="border border-gray-300 rounded p-2 focus:outline-none focus:border-globus-orange"
+              />
+            </div>
+
+            {('content_json' in editItem) && (
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-gray-700">Contenu (JSON)</label>
+                <textarea
+                  rows={8}
+                  value={editItem.content_json || ''}
+                  onChange={(e) => setEditItem({...editItem, content_json: e.target.value})}
+                  className="border border-gray-300 rounded p-2 focus:outline-none focus:border-globus-orange font-mono text-sm"
+                />
+                <p className="text-xs text-gray-500">Gérez le contenu avancé de la page sous format JSON.</p>
+              </div>
+            )}
+
+            {('full_description' in editItem) && (
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-gray-700">Description Complète</label>
+                <textarea
+                  rows={4}
+                  value={editItem.full_description || ''}
+                  onChange={(e) => setEditItem({...editItem, full_description: e.target.value})}
+                  className="border border-gray-300 rounded p-2 focus:outline-none focus:border-globus-orange"
+                />
+              </div>
+            )}
+
+            {('answer' in editItem) && (
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-gray-700">Réponse</label>
+                <textarea
+                  rows={4}
+                  value={editItem.answer || ''}
+                  onChange={(e) => setEditItem({...editItem, answer: e.target.value})}
+                  className="border border-gray-300 rounded p-2 focus:outline-none focus:border-globus-orange"
+                />
+              </div>
+            )}
+
+            <div className="pt-4 flex justify-end gap-4">
+              <button onClick={() => setIsEditing(false)} className="px-4 py-2 text-sm text-gray-600 font-semibold hover:text-gray-800">Annuler</button>
+              <button onClick={handleSaveEdit} className="px-6 py-2 text-sm bg-globus-orange text-white font-bold rounded shadow hover:bg-orange-600 transition-colors">
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>);
 
 }

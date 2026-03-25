@@ -244,7 +244,7 @@ const fmt = (v: number) =>
 new Intl.NumberFormat('fr-FR', {
   maximumFractionDigits: 0
 }).format(v);
-const [isCaisseFormOpen, setIsCaisseFormOpen] = [false, () => {}]; // placeholder
+// const [isCaisseFormOpen, setIsCaisseFormOpen] = [false, () => {}]; // placeholder
 export function ErpFinances() {
   const [activeTab, setActiveTab] = useState('rentabilite');
   const [showCaisseForm, setShowCaisseForm] = useState(false);

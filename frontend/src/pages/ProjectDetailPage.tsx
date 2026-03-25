@@ -16,6 +16,8 @@ import {
   CircleIcon } from
 'lucide-react';
 import { projectsData } from './ProjectsPage';
+import { cmsApi } from '../services/api';
+import { SEOMeta } from '../components/SEOMeta';
 // Extended project details mock database
 const projectDetailsData: Record<string, any> = {
   'villa-alizes': {
@@ -190,11 +192,53 @@ export function ProjectDetailPage() {
     slug: string;
   }>();
   const navigate = useNavigate();
-  const data = projectDetailsData[slug || ''] || projectDetailsData['default'];
+  const [data, setData] = useState<any>(null);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    const fetchProject = async () => {
+      try {
+        if (slug) {
+          const response = await cmsApi.getProject(slug);
+          if (response.data) {
+            // Map the API data structure to the expected UI structure
+            const apiProj = response.data;
+            let parsedGallery = [];
+            try { if (apiProj.gallery_urls_json) parsedGallery = JSON.parse(apiProj.gallery_urls_json); } catch(e){ console.error(e); }
+
+            setData({
+              title: apiProj.title,
+              category: apiProj.category,
+              status: apiProj.completion_date,
+              location: apiProj.location,
+              client: apiProj.client_name,
+              duration: apiProj.budget, // Using budget as duration here due to schema reuse in mapping
+              description: apiProj.short_description,
+              challenge: apiProj.full_description,
+              solution: "Approche intégrée et matériaux de qualité",
+              results: "Projet livré dans les délais et budgets",
+              images: [apiProj.cover_image_url, ...parsedGallery],
+              stats: [
+                { label: 'Surface', value: 'N/A' },
+                { label: 'Ouvriers', value: 'N/A' },
+                { label: 'Durée', value: 'N/A' }
+              ]
+            });
+            return;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      // fallback
+      setData(projectDetailsData[slug || ''] || projectDetailsData['villa-alizes'] || projectDetailsData['default']);
+    };
+    fetchProject();
   }, [slug]);
+
   const [currentImg, setCurrentImg] = useState(0);
+
+  if (!data) return null;
   const nextImg = () => setCurrentImg((prev) => (prev + 1) % data.images.length);
   const prevImg = () =>
   setCurrentImg(
@@ -206,6 +250,7 @@ export function ProjectDetailPage() {
   slice(0, 3);
   return (
     <div className="pt-28 pb-20 bg-white min-h-screen">
+      <SEOMeta title={`${data.title} - Projet BTP Globus`} description={data.description || data.challenge} />
       <div className="container mx-auto px-4">
         {/* Breadcrumb & Back */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">

@@ -81,6 +81,8 @@ const faqData = [
 
 }];
 
+import { SEOMeta } from '../components/SEOMeta';
+
 export function FAQPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -110,6 +112,7 @@ export function FAQPage() {
   filter((category) => category.items.length > 0);
   return (
     <div className="pt-28 pb-20 bg-globus-light min-h-screen">
+      <SEOMeta title="Foire aux Questions - Globus BTP" description="Trouvez les réponses à vos questions concernant la construction, le budget, et notre processus d'accompagnement." />
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header & Search */}
         <div className="text-center mb-16">

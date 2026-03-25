@@ -51,6 +51,8 @@ import { ErpLoginPage } from './pages/ErpLoginPage';
 import { ErpCMS } from './pages/erp/ErpCMS';
 import { ErpSAV } from './pages/erp/ErpSAV';
 import { ClientPlanning } from './pages/client/ClientPlanning';
+import { BudgetChatbot } from './components/BudgetChatbot';
+import { SEOMeta } from './components/SEOMeta';
 function AppContent() {
   const location = useLocation();
   const isClientPortal = location.pathname.startsWith('/espace-client');
@@ -60,6 +62,7 @@ function AppContent() {
     <div
       className={`font-opensans text-globus-gray bg-white w-full min-h-screen flex flex-col ${isPortal ? 'h-screen overflow-hidden' : ''}`}>
       
+      <SEOMeta />
       {!isPortal && <Header />}
       <main className={isPortal ? 'flex-1 h-full' : 'flex-grow'}>
         <Routes>
@@ -124,6 +127,7 @@ function AppContent() {
           <Footer />
           <FloatingWidgets />
           <CookieBanner />
+          <BudgetChatbot />
         </>
       }
     </div>);
