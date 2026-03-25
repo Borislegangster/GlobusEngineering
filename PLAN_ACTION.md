@@ -18,9 +18,17 @@ Conformément à la vision stratégique et aux spécifications techniques de Glo
 *Objectif : Attirer des prospects et générer des leads qualifiés via un contenu entièrement administrable.*
 
 - **1.1. Dynamisation Totale du Contenu Public (CMS) :**
-  - **Aucune page frontend publique ne doit être statique.** L'intégralité du contenu (textes, images, projets, articles de blog, services, informations de contact) doit être dynamiquement servie par le backend.
-  - *Backend :* Création des APIs CRUD (Create, Read, Update, Delete) dans FastAPI pour alimenter le contenu public.
-  - *ERP / Back-office :* Compléter le module "Site Public (CMS)" dans l'espace administrateur (`/frontend/src/pages/erp/...`) pour permettre la gestion intégrale de toutes les pages (Accueil, À Propos, Services, Portfolio, Blog, Contact).
+  - **Aucune page frontend publique ne doit être statique.** L'intégralité du contenu (textes, images, projets, articles de blog, services, informations de contact) doit être dynamiquement servie par le backend pour l'ensemble exhaustif des pages publiques :
+    - `HomePage` (Accueil)
+    - `AboutPage` (À Propos)
+    - `ServicesPage` (Services) et `ServiceDetailPage` (Détail d'un Service)
+    - `ProjectsPage` (Portfolio) et `ProjectDetailPage` (Détail d'un Projet)
+    - `BlogPage` (Blog) et `BlogDetailPage` (Article de Blog)
+    - `ContactPage` (Contact)
+    - `FAQPage` et `HelpCenterPage` (Support et Centre d'Aide)
+    - Les pages légales : `LegalNoticePage` (Mentions Légales), `PrivacyPolicyPage` (Politique de Confidentialité), `TermsPage` (CGV/CGU), `CookiePolicyPage` (Politique des Cookies).
+  - *Backend :* Création des APIs CRUD (Create, Read, Update, Delete) dans FastAPI pour alimenter le contenu de l'ensemble de ces pages.
+  - *ERP / Back-office :* Compléter le module "Site Public (CMS)" dans l'espace administrateur (`/frontend/src/pages/erp/...`) pour permettre la gestion intégrale et complète de toutes ces pages sans exception.
   - *Frontend Public :* Raccorder les vues Vite + React existantes aux nouvelles APIs du CMS pour l'affichage dynamique.
 - **1.2. Widgets Interactifs :** Intégration de la Pop-up WhatsApp.
 - **1.3. Chatbot IA "Estimateur de Budget" :**
