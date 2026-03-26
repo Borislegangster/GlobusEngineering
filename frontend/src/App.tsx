@@ -1,57 +1,69 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { FloatingWidgets } from './components/FloatingWidgets';
-import { HomePage } from './pages/HomePage';
-import { AboutPage } from './pages/AboutPage';
-import { ServicesPage } from './pages/ServicesPage';
-import { ServiceDetailPage } from './pages/ServiceDetailPage';
-import { ProjectsPage } from './pages/ProjectsPage';
-import { ProjectDetailPage } from './pages/ProjectDetailPage';
-import { BlogPage } from './pages/BlogPage';
-import { BlogDetailPage } from './pages/BlogDetailPage';
-import { ContactPage } from './pages/ContactPage';
-import { FAQPage } from './pages/FAQPage';
-import { HelpCenterPage } from './pages/HelpCenterPage';
-import { LegalNoticePage } from './pages/LegalNoticePage';
-import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
-import { TermsPage } from './pages/TermsPage';
-import { CookiePolicyPage } from './pages/CookiePolicyPage';
-import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
-import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { CookieBanner } from './components/CookieBanner';
 import { ClientLayout } from './components/client/ClientLayout';
-import { ClientDashboard } from './pages/client/ClientDashboard';
-import { ClientChantier } from './pages/client/ClientChantier';
-import { ClientFinances } from './pages/client/ClientFinances';
-import { ClientDocuments } from './pages/client/ClientDocuments';
-import { ClientMessages } from './pages/client/ClientMessages';
-import { ClientAccount } from './pages/client/ClientAccount';
-import { ClientSAV } from './pages/client/ClientSAV';
 import { ErpLayout } from './components/erp/ErpLayout';
-import { ErpDashboard } from './pages/erp/ErpDashboard';
-import { ErpRH } from './pages/erp/ErpRH';
-import { ErpFinances } from './pages/erp/ErpFinances';
-import { ErpAchats } from './pages/erp/ErpAchats';
-import { ErpPlanification } from './pages/erp/ErpPlanification';
-import { ErpQHSE } from './pages/erp/ErpQHSE';
-import { ErpMateriel } from './pages/erp/ErpMateriel';
-import { ErpCRM } from './pages/erp/ErpCRM';
-import { ErpDocuments } from './pages/erp/ErpDocuments';
-import { ErpGED } from './pages/erp/ErpGED';
-import { ErpSousTraitants } from './pages/erp/ErpSousTraitants';
-import { ErpChantiers } from './pages/erp/ErpChantiers';
-import { ErpNotifications } from './pages/erp/ErpNotifications';
-import { ErpParametres } from './pages/erp/ErpParametres';
-import { ErpRapports } from './pages/erp/ErpRapports';
-import { ErpAgenda } from './pages/erp/ErpAgenda';
-import { ErpLoginPage } from './pages/ErpLoginPage';
-import { ErpCMS } from './pages/erp/ErpCMS';
-import { ErpSAV } from './pages/erp/ErpSAV';
-import { ClientPlanning } from './pages/client/ClientPlanning';
+
+// ============================================
+// PHASE 1 : SITE PUBLIC
+// ============================================
+const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ServicesPage = lazy(() => import('./pages/ServicesPage').then(m => ({ default: m.ServicesPage })));
+const ServiceDetailPage = lazy(() => import('./pages/ServiceDetailPage').then(m => ({ default: m.ServiceDetailPage })));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage').then(m => ({ default: m.ProjectsPage })));
+const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage').then(m => ({ default: m.ProjectDetailPage })));
+const BlogPage = lazy(() => import('./pages/BlogPage').then(m => ({ default: m.BlogPage })));
+const BlogDetailPage = lazy(() => import('./pages/BlogDetailPage').then(m => ({ default: m.BlogDetailPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const FAQPage = lazy(() => import('./pages/FAQPage').then(m => ({ default: m.FAQPage })));
+const HelpCenterPage = lazy(() => import('./pages/HelpCenterPage').then(m => ({ default: m.HelpCenterPage })));
+const LegalNoticePage = lazy(() => import('./pages/LegalNoticePage').then(m => ({ default: m.LegalNoticePage })));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
+const TermsPage = lazy(() => import('./pages/TermsPage').then(m => ({ default: m.TermsPage })));
+const CookiePolicyPage = lazy(() => import('./pages/CookiePolicyPage').then(m => ({ default: m.CookiePolicyPage })));
+const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+const RegisterPage = lazy(() => import('./pages/RegisterPage').then(m => ({ default: m.RegisterPage })));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })));
+const ErpLoginPage = lazy(() => import('./pages/ErpLoginPage').then(m => ({ default: m.ErpLoginPage })));
+
+// ============================================
+// PHASE 2 : ESPACE CLIENT
+// ============================================
+const ClientDashboard = lazy(() => import('./pages/client/ClientDashboard').then(m => ({ default: m.ClientDashboard })));
+const ClientChantier = lazy(() => import('./pages/client/ClientChantier').then(m => ({ default: m.ClientChantier })));
+const ClientFinances = lazy(() => import('./pages/client/ClientFinances').then(m => ({ default: m.ClientFinances })));
+const ClientDocuments = lazy(() => import('./pages/client/ClientDocuments').then(m => ({ default: m.ClientDocuments })));
+const ClientMessages = lazy(() => import('./pages/client/ClientMessages').then(m => ({ default: m.ClientMessages })));
+const ClientAccount = lazy(() => import('./pages/client/ClientAccount').then(m => ({ default: m.ClientAccount })));
+const ClientSAV = lazy(() => import('./pages/client/ClientSAV').then(m => ({ default: m.ClientSAV })));
+const ClientPlanning = lazy(() => import('./pages/client/ClientPlanning').then(m => ({ default: m.ClientPlanning })));
+
+// ============================================
+// PHASE 3 : ERP & HUB
+// ============================================
+const ErpDashboard = lazy(() => import('./pages/erp/ErpDashboard').then(m => ({ default: m.ErpDashboard })));
+const ErpRH = lazy(() => import('./pages/erp/ErpRH').then(m => ({ default: m.ErpRH })));
+const ErpFinances = lazy(() => import('./pages/erp/ErpFinances').then(m => ({ default: m.ErpFinances })));
+const ErpAchats = lazy(() => import('./pages/erp/ErpAchats').then(m => ({ default: m.ErpAchats })));
+const ErpPlanification = lazy(() => import('./pages/erp/ErpPlanification').then(m => ({ default: m.ErpPlanification })));
+const ErpQHSE = lazy(() => import('./pages/erp/ErpQHSE').then(m => ({ default: m.ErpQHSE })));
+const ErpMateriel = lazy(() => import('./pages/erp/ErpMateriel').then(m => ({ default: m.ErpMateriel })));
+const ErpCRM = lazy(() => import('./pages/erp/ErpCRM').then(m => ({ default: m.ErpCRM })));
+const ErpDocuments = lazy(() => import('./pages/erp/ErpDocuments').then(m => ({ default: m.ErpDocuments })));
+const ErpGED = lazy(() => import('./pages/erp/ErpGED').then(m => ({ default: m.ErpGED })));
+const ErpSousTraitants = lazy(() => import('./pages/erp/ErpSousTraitants').then(m => ({ default: m.ErpSousTraitants })));
+const ErpChantiers = lazy(() => import('./pages/erp/ErpChantiers').then(m => ({ default: m.ErpChantiers })));
+const ErpNotifications = lazy(() => import('./pages/erp/ErpNotifications').then(m => ({ default: m.ErpNotifications })));
+const ErpParametres = lazy(() => import('./pages/erp/ErpParametres').then(m => ({ default: m.ErpParametres })));
+const ErpRapports = lazy(() => import('./pages/erp/ErpRapports').then(m => ({ default: m.ErpRapports })));
+const ErpAgenda = lazy(() => import('./pages/erp/ErpAgenda').then(m => ({ default: m.ErpAgenda })));
+const ErpCMS = lazy(() => import('./pages/erp/ErpCMS').then(m => ({ default: m.ErpCMS })));
+const ErpSAV = lazy(() => import('./pages/erp/ErpSAV').then(m => ({ default: m.ErpSAV })));
 function AppContent() {
   const location = useLocation();
   const isClientPortal = location.pathname.startsWith('/espace-client');
@@ -63,8 +75,16 @@ function AppContent() {
       
       {!isPortal && <Header />}
       <main className={isPortal ? 'flex-1 h-full' : 'flex-grow'}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
+        <Suspense fallback={
+          <div className="flex w-full h-full items-center justify-center min-h-[50vh]">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-8 h-8 rounded-full border-4 border-globus-blue border-t-transparent animate-spin"></div>
+              <p className="font-montserrat font-bold text-globus-blue animate-pulse w-full text-center">Chargement en cours...</p>
+            </div>
+          </div>
+        }>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
           <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
@@ -120,6 +140,7 @@ function AppContent() {
             <Route path="parametres" element={<ErpParametres />} />
           </Route>
         </Routes>
+        </Suspense>
       </main>
       {!isPortal &&
       <>
